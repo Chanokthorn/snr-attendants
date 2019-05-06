@@ -8,9 +8,6 @@ from functools import wraps
 
 bp = Blueprint('auth', __name__, url_prefix='/auth')
 
-
-
-
 @app.route('/index')
 def index():
     return "Hello, World!"
