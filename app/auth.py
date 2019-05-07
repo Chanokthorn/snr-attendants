@@ -1,7 +1,6 @@
 import functools
 from app import app, login
-from flask import Flask, render_template, jsonify, request, redirect, url_for, Response, send_from_directory, Response, Blueprint
-from flask_cors import CORS, cross_origin
+from flask import Flask, render_template, jsonify, request, redirect, url_for, Response, send_from_directory, Response, Blueprint, make_response
 from flask_login import current_user, login_user, logout_user
 from app.models import Login
 from functools import wraps
@@ -15,7 +14,7 @@ def index():
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if current_user.is_authenticated:
-        return "not authenticated"
+        "not authenticated"
     uid = request.args.get('uid')
     password = request.args.get('password')
     print("received: {} {}".format(uid, password))
@@ -23,7 +22,7 @@ def login():
     if login is None or not login.check_password(password):
         return 'Invalid username or password'
     login_user(login)
-    return "logged in"
+    return "successful"
 
 @app.route('/logout', methods=['GET', 'POST'])
 def logout():

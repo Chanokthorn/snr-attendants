@@ -3,11 +3,14 @@ from config import Config
 from flask_sqlalchemy import SQLAlchemy
 from functools import wraps
 from flask_login import LoginManager, current_user, login_user, logout_user
+from flask_cors import CORS, cross_origin
 
 app = Flask(__name__)
+CORS(app, supports_credentials=True)
 app.config.from_object(Config)
 login = LoginManager(app)
 db = SQLAlchemy(app)
+
 
 def login_required(role="ANY"):
     def wrapper(fn):

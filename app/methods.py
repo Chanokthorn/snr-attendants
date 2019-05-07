@@ -9,6 +9,22 @@ import uuid
 
 bp = Blueprint('methods', __name__, url_prefix='/methods')
 
+@app.route('meeting/<string:m_id', methods=['GET'])
+@login_required(role="secretary")
+def get_meetings(m_id):
+    uid = current_user.get_id()
+    try:
+        meetings = Meeting.query.filter_by(m_secretary = uid).all()
+        result = []
+        for meeting in meetings:
+            result.append(meeting.m_id)
+        response = Response(jsonify(result), status=200)
+    except(RuntimeError, TypeError, NameError):
+        db.session.rollback()
+        eprint(RuntimeError, TypeError, NameError)
+        response = Response("error", status=400)
+    return response
+
 @app.route('/meeting/<string:m_id>', methods=['PUT'])
 @login_required(role="secretary")
 def create_meeting(m_id):
