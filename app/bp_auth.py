@@ -11,12 +11,14 @@ bp = Blueprint('auth', __name__, url_prefix='/auth')
 def index():
     return "Hello, World!"
 
-@app.route('/login', methods=['GET', 'POST'])
+@app.route('/login', methods=['POST'])
 def login():
     if current_user.is_authenticated:
         "not authenticated"
-    uid = request.args.get('uid')
-    password = request.args.get('password')
+#     uid = request.args.get('uid')
+#     password = request.args.get('password')
+    uid = request.form['uid']
+    password = request.form['password']
     print("received: {} {}".format(uid, password))
     login = Login.query.filter_by(uid=uid).first()
     if login is None or not login.check_password(password):

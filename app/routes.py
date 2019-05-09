@@ -4,10 +4,11 @@ from flask_cors import CORS, cross_origin
 from flask_login import current_user, login_user, logout_user
 from app.models import Login
 from functools import wraps
-from . import auth, methods
+from . import bp_auth, bp_methods, bp_recog
 
-app.register_blueprint(auth.bp)
-app.register_blueprint(methods.bp)
+app.register_blueprint(bp_auth.bp)
+app.register_blueprint(bp_methods.bp)
+app.register_blueprint(bp_recog.bp)
 
 @app.route('/test_login', methods=['GET', 'POST'])
 @login_required(role="secretary")
