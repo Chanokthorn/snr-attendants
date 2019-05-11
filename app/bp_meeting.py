@@ -21,13 +21,35 @@ def get_meetings():
         result = []
         for meeting in meetings:
             result.append(map_row_data_to_object(meeting))
-            response = jsonify(result)
+        response = jsonify(result)
 #         response = Response(jsonify(result))
     except(RuntimeError, TypeError, NameError):
         db.session.rollback()
         eprint(RuntimeError, TypeError, NameError)
         response = "error"
 #         response = Response("error")
+    return response
+
+@app.route('/meeting/incoming', methods=['GET'])
+@login_required(role="secretary")
+def get_incoming_meetings():
+    uid = current_user.get_id()
+    meetings = db.session.query(Meeting).filter(Meeting.m_secretary==uid).filter(Meeting.m_start_schedule >= datetime.datetime.now()).all()
+    result = []
+    for meeting in meetings:
+        result.append(map_row_data_to_object(meeting))
+    response = jsonify(result)
+    return response
+
+@app.route('/meeting/history', methods=['GET'])
+@login_required(role="secretary")
+def get_history_meetings():
+    uid = current_user.get_id()
+    meetings = db.session.query(Meeting).filter(Meeting.m_secretary==uid).filter(Meeting.m_start_schedule < datetime.datetime.now()).all()
+    result = []
+    for meeting in meetings:
+        result.append(map_row_data_to_object(meeting))
+    response = jsonify(result)
     return response
 
 @app.route('/meeting/all', methods=['GET'])
