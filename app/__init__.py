@@ -5,7 +5,7 @@ from functools import wraps
 from flask_login import LoginManager, current_user, login_user, logout_user
 from flask_cors import CORS, cross_origin
 
-app = Flask(__name__)
+app = Flask(__name__, static_folder="profiles")
 CORS(app, supports_credentials=True)
 app.config.from_object(Config)
 login = LoginManager(app)

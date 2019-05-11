@@ -54,9 +54,12 @@ class Meeting(db.Model):
     m_endtime = db.Column(db.DateTime, index=False, unique=False)
     m_committee = db.Column(db.String(45), index=False, unique=False)
     m_secretary = db.Column(db.Integer, index=False, unique=False)
+    m_title = db.Column(db.String(45), index=False, unique=False)
+    m_start_schedule = db.Column(db.DateTime, index=False, unique=False)
+    m_end_schedule = db.Column(db.DateTime, index=False, unique=False)
     
 class Attendance(db.Model):
-    a_id = db.Column(db.String(45), primary_key=True)
-    m_id = db.Column(db.String(45), index=False, unique=False)
-    p_id = db.Column(db.String(45), index=False, unique=False)
+#     a_id = db.Column(db.String(45), primary_key=True)
+    m_id = db.Column(db.String(45), primary_key=True)
+    p_id = db.Column(db.String(45), primary_key=True)
     a_chkintime = db.Column(db.DateTime, index=False, unique=False)

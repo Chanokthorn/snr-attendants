@@ -37,16 +37,16 @@ def detect_personnel():
     p_id = None
     r = random.randint(0,100)
     result = "NOT_FOUND"
-    if r < 70:
+    if r < 50:
         p_id = None
     else:
-        if r<80:
+        if r<60:
             p_id = '123'
-        elif r<85:
+        elif r<70:
             p_id = '143'
-        elif r<90:
+        elif r<80:
             p_id = '151'
-        elif r<95:
+        elif r<90:
             p_id = 'john'
     ##############MOCK##############
     if p_id is not None:
