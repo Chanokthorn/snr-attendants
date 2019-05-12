@@ -34,7 +34,8 @@ def get_meetings():
 @login_required(role="secretary")
 def get_incoming_meetings():
     uid = current_user.get_id()
-    meetings = db.session.query(Meeting).filter(Meeting.m_secretary==uid).filter(Meeting.m_start_schedule >= datetime.datetime.now()).all()
+#     meetings = db.session.query(Meeting).filter(Meeting.m_secretary==uid).filter(Meeting.m_start_schedule >= datetime.datetime.now()).all()
+    meetings = db.session.query(Meeting).filter(Meeting.m_secretary==uid).filter(Meeting.m_state!="ENDED").all()
     result = []
     for meeting in meetings:
         result.append(map_row_data_to_object(meeting))
@@ -45,7 +46,8 @@ def get_incoming_meetings():
 @login_required(role="secretary")
 def get_history_meetings():
     uid = current_user.get_id()
-    meetings = db.session.query(Meeting).filter(Meeting.m_secretary==uid).filter(Meeting.m_start_schedule < datetime.datetime.now()).all()
+#     meetings = db.session.query(Meeting).filter(Meeting.m_secretary==uid).filter(Meeting.m_start_schedule < datetime.datetime.now()).all()
+    meetings = db.session.query(Meeting).filter(Meeting.m_secretary==uid).filter(Meeting.m_state=="ENDED").all()
     result = []
     for meeting in meetings:
         result.append(map_row_data_to_object(meeting))
@@ -74,7 +76,6 @@ def create_meeting(m_title):
     m_id = uuid.uuid4().hex
     uid = current_user.get_id()
     c_id= request.form['c_id']
-    m_title = request.form['m_title']
     m_start_schedule = request.form['m_start_schedule']
     m_end_schedule = request.form['m_end_schedule']
     try:
@@ -120,7 +121,7 @@ def add_personnel_to_meeting(m_id):
         meeting = Meeting.query.filter_by(m_id=m_id).first()
         personnel = Personnel.query.filter_by(p_id=p_id).first()
 #         a_id = uuid.uuid4().hex
-        attendance = Attendance(m_id=meeting.m_id, p_id=personnel.p_id, a_chkintime=time.time())
+        attendance = Attendance(m_id=meeting.m_id, p_id=personnel.p_id, a_chkintime=datetime.datetime.now())
         db.session.add(attendance)
         meeting.m_num_of_attendants += 1
         db.session.commit()

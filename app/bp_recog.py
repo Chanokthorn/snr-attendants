@@ -8,6 +8,8 @@ import time
 from app.utils import eprint, base64_to_image_file, map_row_data_to_object
 
 import random
+import cv2
+import os
 
 #####
 # from app.FaceRecognition.FindFaceInImage import process_this_frame,add_new_person
@@ -15,13 +17,15 @@ import random
 
 bp = Blueprint('recog', __name__, url_prefix='/recog')
 
+profile_path = "app/profiles"
+
 @app.route('/recog/personnel/<string:p_id>', methods=['PUT'])
-@login_required(role="secretary")
+@login_required(role="admin")
 def add_personnel(p_id):
-    print(request.form)
     image64 = request.form['image']
     image = base64_to_image_file(image64)
-    print("SHAPE: ", image.shape)
+    file_name = os.path.join(profile_path,p_id + ".jpg")
+    cv2.imwrite(file_name, cv2.cvtColor(image, cv2.COLOR_BGR2RGB))
     return "success"
 
 @app.route('/recog/personnel', methods=['POST'])

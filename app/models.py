@@ -10,6 +10,7 @@ def load_user(id):
 
 class Login(UserMixin,db.Model):
     uid = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(45), index=True, unique=True)
     role = db.Column(db.String(45), index=True, unique=False)
     password_hash = db.Column(db.String(128))
     
@@ -57,6 +58,7 @@ class Meeting(db.Model):
     m_title = db.Column(db.String(45), index=False, unique=False)
     m_start_schedule = db.Column(db.DateTime, index=False, unique=False)
     m_end_schedule = db.Column(db.DateTime, index=False, unique=False)
+    m_state = db.Column(db.DateTime, index=False, unique=False)
     
 class Attendance(db.Model):
 #     a_id = db.Column(db.String(45), primary_key=True)

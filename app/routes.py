@@ -5,12 +5,13 @@ from flask_cors import CORS, cross_origin
 from flask_login import current_user, login_user, logout_user
 from app.models import Login
 from functools import wraps
-from . import bp_auth, bp_meeting, bp_recog, bp_committee
+from . import bp_auth, bp_meeting, bp_recog, bp_committee, bp_personnel
 
 app.register_blueprint(bp_auth.bp)
 app.register_blueprint(bp_meeting.bp)
 app.register_blueprint(bp_recog.bp)
 app.register_blueprint(bp_committee.bp)
+app.register_blueprint(bp_personnel.bp)
 
 @app.route('/profiles/<path:fileName>')
 def send_js(path):
@@ -23,8 +24,8 @@ def test_login():
     uid = current_user.get_id()
     if uid is not None:
         print("UID: ",uid)
-        role = Login.query.filter_by(uid=uid).first().role
-        result = {"uid": uid, "role": role}
+        user = Login.query.filter_by(uid=uid).first()
+        result = {"username": user.username, "role": user.role}
         return json.dumps(result)
     else:
         return "unauthorized"

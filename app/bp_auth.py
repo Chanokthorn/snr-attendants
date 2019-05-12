@@ -14,14 +14,17 @@ def index():
 @app.route('/login', methods=['POST'])
 def login():
     if current_user.is_authenticated:
-        "not authenticated"
+        "already authenticated"
 #     uid = request.args.get('uid')
 #     password = request.args.get('password')
-    uid = request.form['uid']
+    username = request.form['username']
     password = request.form['password']
-    print("received: {} {}".format(uid, password))
-    login = Login.query.filter_by(uid=uid).first()
+    mode = request.form['mode']
+    print("received: {} {}".format(username, password))
+    login = Login.query.filter_by(username=username).first()
     if login is None or not login.check_password(password):
+        return 'Invalid username or password'
+    if (int(mode) == 0 and login.role != "secretary") or (int(mode) == 1 and login.role != "admin"):
         return 'Invalid username or password'
     login_user(login)
     return "successful"
