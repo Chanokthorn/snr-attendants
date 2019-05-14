@@ -10,6 +10,7 @@ CORS(app, supports_credentials=True)
 app.config.from_object(Config)
 login = LoginManager(app)
 db = SQLAlchemy(app)
+BASE_URI = "/thananop/ssdfaces"
 
 
 def login_required(role="ANY"):

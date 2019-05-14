@@ -1,4 +1,4 @@
-from app import app, login, login_required
+from app import app, login, login_required, BASE_URI
 from flask import Flask, render_template, jsonify, request, redirect, url_for, Response, send_from_directory, Response
 import json
 from flask_cors import CORS, cross_origin
@@ -9,16 +9,16 @@ from . import bp_auth, bp_meeting, bp_recog, bp_committee, bp_personnel
 
 app.register_blueprint(bp_auth.bp)
 app.register_blueprint(bp_meeting.bp)
-app.register_blueprint(bp_recog.bp)
+# app.register_blueprint(bp_recog.bp)
 app.register_blueprint(bp_committee.bp)
 app.register_blueprint(bp_personnel.bp)
 
-@app.route('/profiles/<path:fileName>')
-def send_js(path):
-    print("path: ", path)
+@app.route(BASE_URI + '/profiles/<path:fileName>')
+def send_js(fileName):
+    print("path: ", fileName)
     return send_from_directory('profiles', fileName, as_attachment=True)
 
-@app.route('/test_login', methods=['GET', 'POST'])
+@app.route(BASE_URI+'/test_login', methods=['GET', 'POST'])
 # @login_required(role="secretary")
 def test_login():
     uid = current_user.get_id()

@@ -1,5 +1,5 @@
 import functools
-from app import app, login
+from app import app, login, BASE_URI
 from flask import Flask, render_template, jsonify, request, redirect, url_for, Response, send_from_directory, Response, Blueprint, make_response
 from flask_login import current_user, login_user, logout_user
 from app.models import Login
@@ -7,11 +7,11 @@ from functools import wraps
 
 bp = Blueprint('auth', __name__, url_prefix='/auth')
 
-@app.route('/index')
+@app.route(BASE_URI + '/index')
 def index():
     return "Hello, World!"
 
-@app.route('/login', methods=['POST'])
+@app.route(BASE_URI + '/login', methods=['POST'])
 def login():
     if current_user.is_authenticated:
         "already authenticated"
@@ -29,7 +29,7 @@ def login():
     login_user(login)
     return "successful"
 
-@app.route('/logout', methods=['GET', 'POST'])
+@app.route(BASE_URI + '/logout', methods=['GET', 'POST'])
 def logout():
     logout_user()
     return redirect(url_for('index'))

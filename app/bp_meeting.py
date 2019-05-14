@@ -1,4 +1,4 @@
-from app import app, login, login_required, db
+from app import app, login, login_required, db, BASE_URI
 from flask import Flask, render_template, jsonify, request, redirect, url_for, Response, send_from_directory, Response, Blueprint
 import json
 from flask_cors import CORS, cross_origin
@@ -17,7 +17,7 @@ state_started = "STARTED"
 state_ongoing = "ONGOING"
 state_ended = "ENDED"
 
-@app.route('/meeting', methods=['GET'])
+@app.route(BASE_URI + '/meeting', methods=['GET'])
 @login_required(role="secretary")
 def get_meetings():
     uid = current_user.get_id()
@@ -35,7 +35,7 @@ def get_meetings():
 #         response = Response("error")
     return response
 
-@app.route('/meeting/incoming', methods=['GET'])
+@app.route(BASE_URI + '/meeting/incoming', methods=['GET'])
 @login_required(role="secretary")
 def get_incoming_meetings():
     uid = current_user.get_id()
@@ -47,7 +47,7 @@ def get_incoming_meetings():
     response = jsonify(result)
     return response
 
-@app.route('/meeting/history', methods=['GET'])
+@app.route(BASE_URI + '/meeting/history', methods=['GET'])
 @login_required(role="secretary")
 def get_history_meetings():
     uid = current_user.get_id()
@@ -59,7 +59,7 @@ def get_history_meetings():
     response = jsonify(result)
     return response
 
-@app.route('/meeting/all', methods=['GET'])
+@app.route(BASE_URI + '/meeting/all', methods=['GET'])
 @login_required(role="admin")
 def get_all_meetings():
     uid = current_user.get_id()
@@ -74,7 +74,7 @@ def get_all_meetings():
         return "failure"
 
 
-@app.route('/meeting/<string:m_title>', methods=['PUT'])
+@app.route(BASE_URI + '/meeting/<string:m_title>', methods=['PUT'])
 @login_required(role="secretary")
 def create_meeting(m_title):
     print("REQUEST FORM: ", request)
@@ -94,7 +94,7 @@ def create_meeting(m_title):
         return Response
     return "success"
 
-@app.route('/meeting/<string:m_id>/init', methods=['POST'])
+@app.route(BASE_URI + '/meeting/<string:m_id>/init', methods=['POST'])
 @login_required(role="secretary")
 def update_meeting_init_state(m_id):
     m_starttime = datetime.datetime.now()
@@ -103,7 +103,7 @@ def update_meeting_init_state(m_id):
     db.session.commit()
     return "success"
 
-@app.route('/meeting/<string:m_id>/start', methods=['POST'])
+@app.route(BASE_URI + '/meeting/<string:m_id>/start', methods=['POST'])
 @login_required(role="secretary")
 def update_meeting_starttime(m_id):
     m_starttime = datetime.datetime.now()
@@ -112,7 +112,7 @@ def update_meeting_starttime(m_id):
     db.session.commit()
     return "success"
 
-@app.route('/meeting/<string:m_id>/end', methods=['POST'])
+@app.route(BASE_URI + '/meeting/<string:m_id>/end', methods=['POST'])
 @login_required(role="secretary")
 def update_meeting_endtime(m_id):
     m_endtime = datetime.datetime.now()
@@ -126,7 +126,7 @@ def update_meeting_endtime(m_id):
 # def create_meeting(m_title):
     
 
-@app.route('/meeting/attend/<string:m_id>', methods=['PUT'])
+@app.route(BASE_URI + '/meeting/attend/<string:m_id>', methods=['PUT'])
 @login_required(role="secretary")
 def add_personnel_to_meeting(m_id):
     p_id= request.form['p_id']
@@ -146,7 +146,7 @@ def add_personnel_to_meeting(m_id):
         return "failure"
         
     
-@app.route('/meeting/<string:m_id>', methods=['GET'])
+@app.route(BASE_URI + '/meeting/<string:m_id>', methods=['GET'])
 @login_required(role="secretary")
 def get_attendants(m_id):
     try:

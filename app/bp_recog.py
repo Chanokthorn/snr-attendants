@@ -1,4 +1,4 @@
-from app import app, login, login_required, db
+from app import app, login, login_required, db, BASE_URI
 from flask import Flask, render_template, request, redirect, url_for, Response, send_from_directory, Response, Blueprint
 import json
 from flask_cors import CORS, cross_origin
@@ -19,7 +19,7 @@ bp = Blueprint('recog', __name__, url_prefix='/recog')
 
 profile_path = "app/profiles"
 
-@app.route('/recog/personnel/<string:p_id>', methods=['PUT'])
+@app.route(BASE_URI + '/recog/personnel/<string:p_id>', methods=['PUT'])
 @login_required(role="admin")
 def add_personnel(p_id):
     image64 = request.form['image']
@@ -30,7 +30,7 @@ def add_personnel(p_id):
     add_new_person(image, p_id)
     return "success"
 
-@app.route('/recog/personnel', methods=['POST'])
+@app.route(BASE_URI + '/recog/personnel', methods=['POST'])
 @login_required(role="secretary")
 def detect_personnel():
     image64 = request.form['image']

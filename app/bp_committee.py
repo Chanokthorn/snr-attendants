@@ -1,4 +1,4 @@
-from app import app, login, login_required, db
+from app import app, login, login_required, db, BASE_URI
 from flask import Flask, render_template, jsonify, request, redirect, url_for, Response, send_from_directory, Response, Blueprint
 import json
 from flask_cors import CORS, cross_origin
@@ -36,7 +36,7 @@ bp = Blueprint('committee', __name__, url_prefix='/committee')
 # #         response = Response("error")
 #     return response
 
-@app.route('/committee', methods=['GET'])
+@app.route(BASE_URI + '/committee', methods=['GET'])
 @login_required(role="secretary")
 def get_all_committee():
     try:

@@ -1,4 +1,4 @@
-from app import app, login, login_required, db
+from app import app, login, login_required, db, BASE_URI
 from flask import Flask, render_template, jsonify, request, redirect, url_for, Response, send_from_directory, Response, Blueprint
 from flask_cors import CORS, cross_origin
 from app.models import Meeting, Personnel, Committee, Login, Attendance
@@ -9,7 +9,7 @@ import uuid
 
 bp = Blueprint('attendance', __name__, url_prefix='/attendance')
 
-@app.route('/attendance/', methods=['GET'])
+@app.route(BASE_URI + '/attendance/', methods=['GET'])
 @login_required(role="secretary")
 def get_attendants()
 

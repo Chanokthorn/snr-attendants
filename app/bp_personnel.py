@@ -1,4 +1,4 @@
-from app import app, login, login_required, db
+from app import app, login, login_required, db, BASE_URI
 from flask import Flask, render_template, jsonify, request, redirect, url_for, Response, send_from_directory, Response, Blueprint
 import json
 from flask_cors import CORS, cross_origin
@@ -12,7 +12,7 @@ from sqlalchemy.exc import IntegrityError
 
 bp = Blueprint('personnel', __name__, url_prefix='/personnel')
 
-@app.route('/personnel', methods=['GET'])
+@app.route(BASE_URI + '/personnel', methods=['GET'])
 @login_required()
 def get_personnels():
     try:
@@ -28,7 +28,7 @@ def get_personnels():
         response = "error"
     return response
 
-@app.route('/personnel', methods=['POST'])
+@app.route(BASE_URI + '/personnel', methods=['POST'])
 @login_required(role="admin")
 def create_personnel():
     try:
