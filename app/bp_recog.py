@@ -12,7 +12,7 @@ import cv2
 import os
 
 #####
-# from app.FaceRecognition.FindFaceInImage import process_this_frame,add_new_person
+from app.FaceRecognition.FindFaceInImage import process_this_frame,add_new_person
 #####
 
 bp = Blueprint('recog', __name__, url_prefix='/recog')
@@ -25,7 +25,9 @@ def add_personnel(p_id):
     image64 = request.form['image']
     image = base64_to_image_file(image64)
     file_name = os.path.join(profile_path,p_id + ".jpg")
-    cv2.imwrite(file_name, cv2.cvtColor(image, cv2.COLOR_BGR2RGB))
+    image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+    cv2.imwrite(file_name, image)
+    add_new_person(image, p_id)
     return "success"
 
 @app.route('/recog/personnel', methods=['POST'])
@@ -33,29 +35,40 @@ def add_personnel(p_id):
 def detect_personnel():
     image64 = request.form['image']
     image = base64_to_image_file(image64)
+#     return json.dumps(process_this_frame(image))
+#     print("SHAPE: ", image.shape)
+    boxes = process_this_frame(image)
+    result = "NOT_FOUND"
+    if len(boxes) > 0:
+        p_id = boxes[0]['id']
+        personnel = Personnel.query.filter_by(p_id=p_id).first()
+        result = map_row_data_to_object(personnel)
+    return json.dumps(result)
+    
+    
     #####
 #     return json.dumps(process_this_frame(image))
     #####
     
     ##############MOCK##############
-    p_id = None
-    r = random.randint(0,100)
-    result = "NOT_FOUND"
-    if r < 50:
-        p_id = None
-    else:
-        if r<60:
-            p_id = '123'
-        elif r<70:
-            p_id = '143'
-        elif r<80:
-            p_id = '151'
-        elif r<90:
-            p_id = 'john'
+#     p_id = None
+#     r = random.randint(0,100)
+#     result = "NOT_FOUND"
+#     if r < 50:
+#         p_id = None
+#     else:
+#         if r<60:
+#             p_id = '123'
+#         elif r<70:
+#             p_id = '143'
+#         elif r<80:
+#             p_id = '151'
+#         elif r<90:
+#             p_id = 'john'
     ##############MOCK##############
-    if p_id is not None:
-        personnel = Personnel.query.filter_by(p_id=p_id).first()
-        result = map_row_data_to_object(personnel)
+#     if p_id is not None:
+#         personnel = Personnel.query.filter_by(p_id=p_id).first()
+#         result = map_row_data_to_object(personnel)
     
-    return json.dumps(result)
+#     return json.dumps(result)
     

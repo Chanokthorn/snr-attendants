@@ -12,6 +12,11 @@ from sqlalchemy.exc import IntegrityError
 
 bp = Blueprint('meeting', __name__, url_prefix='/meeting')
 
+state_new = "NEW"
+state_started = "STARTED"
+state_ongoing = "ONGOING"
+state_ended = "ENDED"
+
 @app.route('/meeting', methods=['GET'])
 @login_required(role="secretary")
 def get_meetings():
@@ -35,7 +40,7 @@ def get_meetings():
 def get_incoming_meetings():
     uid = current_user.get_id()
 #     meetings = db.session.query(Meeting).filter(Meeting.m_secretary==uid).filter(Meeting.m_start_schedule >= datetime.datetime.now()).all()
-    meetings = db.session.query(Meeting).filter(Meeting.m_secretary==uid).filter(Meeting.m_state!="ENDED").all()
+    meetings = db.session.query(Meeting).filter(Meeting.m_secretary==uid).filter(Meeting.m_state!=state_ended).all()
     result = []
     for meeting in meetings:
         result.append(map_row_data_to_object(meeting))
@@ -47,7 +52,7 @@ def get_incoming_meetings():
 def get_history_meetings():
     uid = current_user.get_id()
 #     meetings = db.session.query(Meeting).filter(Meeting.m_secretary==uid).filter(Meeting.m_start_schedule < datetime.datetime.now()).all()
-    meetings = db.session.query(Meeting).filter(Meeting.m_secretary==uid).filter(Meeting.m_state=="ENDED").all()
+    meetings = db.session.query(Meeting).filter(Meeting.m_secretary==uid).filter(Meeting.m_state==state_ended).all()
     result = []
     for meeting in meetings:
         result.append(map_row_data_to_object(meeting))
@@ -80,7 +85,7 @@ def create_meeting(m_title):
     m_end_schedule = request.form['m_end_schedule']
     try:
         m = Meeting(m_id=m_id, m_secretary=uid, m_committee=c_id, m_num_of_attendants=0, m_title=m_title\
-                    ,m_start_schedule=m_start_schedule, m_end_schedule=m_end_schedule)
+                    ,m_start_schedule=m_start_schedule, m_end_schedule=m_end_schedule, m_state=state_new)
         db.session.add(m)
         db.session.commit()
     except(RuntimeError, TypeError, NameError):
@@ -89,21 +94,30 @@ def create_meeting(m_title):
         return Response
     return "success"
 
-@app.route('/meeting/<string:m_id>/starttime', methods=['POST'])
+@app.route('/meeting/<string:m_id>/init', methods=['POST'])
+@login_required(role="secretary")
+def update_meeting_init_state(m_id):
+    m_starttime = datetime.datetime.now()
+    query_m_id = Meeting.query.filter_by(m_id=m_id).first().m_id
+    db.session.query(Meeting).filter(Meeting.m_id == query_m_id).update({Meeting.m_state: state_started})
+    db.session.commit()
+    return "success"
+
+@app.route('/meeting/<string:m_id>/start', methods=['POST'])
 @login_required(role="secretary")
 def update_meeting_starttime(m_id):
     m_starttime = datetime.datetime.now()
     query_m_id = Meeting.query.filter_by(m_id=m_id).first().m_id
-    db.session.query(Meeting).filter(Meeting.m_id == query_m_id).update({Meeting.m_starttime: m_starttime})
+    db.session.query(Meeting).filter(Meeting.m_id == query_m_id).update({Meeting.m_starttime: m_starttime, Meeting.m_state: state_ongoing})
     db.session.commit()
     return "success"
 
-@app.route('/meeting/<string:m_id>/endtime', methods=['POST'])
+@app.route('/meeting/<string:m_id>/end', methods=['POST'])
 @login_required(role="secretary")
 def update_meeting_endtime(m_id):
     m_endtime = datetime.datetime.now()
     query_m_id = Meeting.query.filter_by(m_id=m_id).first().m_id
-    db.session.query(Meeting).filter(Meeting.m_id == query_m_id).update({Meeting.m_endtime: m_endtime})
+    db.session.query(Meeting).filter(Meeting.m_id == query_m_id).update({Meeting.m_endtime: m_endtime, Meeting.m_state: state_ended})
     db.session.commit()
     return "success"
     

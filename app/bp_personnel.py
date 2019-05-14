@@ -13,7 +13,7 @@ from sqlalchemy.exc import IntegrityError
 bp = Blueprint('personnel', __name__, url_prefix='/personnel')
 
 @app.route('/personnel', methods=['GET'])
-@login_required(role="admin")
+@login_required()
 def get_personnels():
     try:
         personnels = db.session.query(Personnel).all()
@@ -26,4 +26,28 @@ def get_personnels():
         db.session.rollback()
         eprint(RuntimeError, TypeError, NameError)
         response = "error"
+    return response
+
+@app.route('/personnel', methods=['POST'])
+@login_required(role="admin")
+def create_personnel():
+    try:
+        print("REQUEST FORM: ", request.form)
+        p_id = uuid.uuid4().hex
+        p_title = request.form['p_title']
+        p_firstname = request.form['p_firstname']
+        p_lastname = request.form['p_lastname']
+        p_phone = request.form['p_phone']
+        p_email = request.form['p_email']
+        p_note = request.form['p_note']
+        personnel = Personnel(p_id=p_id,p_title=p_title,p_firstname=p_firstname,\
+            p_lastname=p_lastname,p_phone=p_phone,p_email=p_email,p_note=p_note )
+        db.session.add(personnel)
+        db.session.commit()
+        personnel_send_back = map_row_data_to_object(personnel)
+        response = jsonify(personnel_send_back)
+    except IntegrityError:
+        db.session.rollback()
+        eprint("already exists")
+        response = "failure"
     return response
